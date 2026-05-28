@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>adminmossel</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=EB+Garamond:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0c0906;
+  --bg2:#131009;
+  --cream:#f0e8d8;
+  --warm:#d4c4a0;
+  --gold:#c8922a;
+  --gold2:#e8aa40;
+  --dim:rgba(240,232,216,.12);
+  --border:rgba(200,146,42,.15);
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:'EB Garamond',Georgia,serif;
+  background:var(--bg);
+  color:var(--cream);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* grain */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:.6;
+}
+
+/* ── HERO ── */
+#hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:4rem 2rem;
+  background:
+    radial-gradient(ellipse at 50% 60%, rgba(200,146,42,.07) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 20%, rgba(200,146,42,.04) 0%, transparent 45%);
+  z-index:1;
+}
+
+.hero-eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--gold);opacity:.7;margin-bottom:2rem;
+  animation:fadeup .8s ease both;
+}
+
+.hero-name{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(4rem,12vw,9rem);
+  font-weight:700;line-height:.88;
+  color:var(--cream);
+  text-align:center;
+  letter-spacing:-.02em;
+  animation:fadeup .8s .1s ease both;
+}
+.hero-name em{
+  font-style:italic;
+  color:var(--gold);
+  display:block;
+}
+
+.hero-rule{
+  width:80px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  margin:2.5rem auto;
+  animation:fadeup .8s .2s ease both;
+}
+
+.hero-bio{
+  font-size:1.1rem;color:var(--warm);opacity:.7;
+  text-align:center;max-width:380px;line-height:1.6;
+  letter-spacing:.02em;
+  animation:fadeup .8s .3s ease both;
+}
+
+.hero-scroll{
+  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  font-family:'JetBrains Mono',monospace;font-size:.65rem;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold);opacity:.4;
+  animation:fadeup .8s .6s ease both;
+}
+.scroll-line{
+  width:1px;height:40px;
+  background:linear-gradient(180deg,var(--gold),transparent);
+  animation:scrollpulse 2s ease infinite;
+}
+@keyframes scrollpulse{
+  0%,100%{opacity:.3;transform:scaleY(1)}
+  50%{opacity:.8;transform:scaleY(1.2)}
+}
+
+/* ── REPOS SECTION ── */
+#repos{
+  position:relative;z-index:1;
+  padding:5rem 2rem 6rem;
+  max-width:1100px;margin:0 auto;
+}
+
+.section-head{
+  display:flex;align-items:baseline;gap:1.2rem;
+  margin-bottom:3rem;
+  padding-bottom:1rem;
+  border-bottom:1px solid var(--border);
+}
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.8rem;font-weight:700;color:var(--cream);
+}
+.section-title em{color:var(--gold);font-style:italic}
+.section-count{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;color:var(--gold);opacity:.5;
+  letter-spacing:.1em;
+}
+
+/* Loading state */
+#loading{
+  text-align:center;padding:4rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.8rem;letter-spacing:.15em;
+  color:var(--gold);opacity:.45;
+}
+
+/* Repo grid */
+#grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:1.2rem;
+}
+
+.repo-card{
+  position:relative;
+  background:rgba(255,255,255,.028);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:6px;
+  padding:1.5rem;
+  text-decoration:none;
+  color:inherit;
+  display:flex;flex-direction:column;gap:.8rem;
+  transition:background .2s, border-color .2s, transform .2s;
+  overflow:hidden;
+}
+.repo-card::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,146,42,.3),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.repo-card:hover{
+  background:rgba(200,146,42,.05);
+  border-color:rgba(200,146,42,.25);
+  transform:translateY(-2px);
+}
+.repo-card:hover::before{opacity:1}
+
+.repo-name{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;font-weight:700;
+  color:var(--cream);letter-spacing:.01em;
+}
+.repo-name span{color:var(--gold);font-style:italic}
+
+.repo-desc{
+  font-size:.88rem;color:var(--warm);opacity:.6;
+  line-height:1.5;flex:1;
+}
+.repo-desc.empty{font-style:italic;opacity:.3}
+
+.repo-meta{
+  display:flex;align-items:center;gap:1rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;color:var(--warm);opacity:.45;
+  letter-spacing:.05em;margin-top:.2rem;
+}
+.repo-lang{
+  display:flex;align-items:center;gap:.35rem;
+}
+.lang-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--gold);flex-shrink:0;
+}
+.repo-stars{display:flex;align-items:center;gap:.3rem}
+.repo-arrow{
+  position:absolute;top:1.4rem;right:1.4rem;
+  color:var(--gold);opacity:0;font-size:.85rem;
+  transition:opacity .2s,transform .2s;
+}
+.repo-card:hover .repo-arrow{opacity:.6;transform:translate(2px,-2px)}
+
+/* Pages badge */
+.pages-badge{
+  display:inline-flex;align-items:center;gap:.3rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--gold);background:rgba(200,146,42,.1);
+  border:1px solid rgba(200,146,42,.25);
+  border-radius:10px;padding:.15rem .55rem;
+  margin-left:.5rem;vertical-align:middle;
+}
+
+/* Error state */
+#error{
+  text-align:center;padding:3rem;
+  font-size:.9rem;color:var(--warm);opacity:.5;
+}
+
+/* ── FOOTER ── */
+footer{
+  position:relative;z-index:1;
+  padding:2rem;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;gap:2rem;
+  flex-wrap:wrap;
+}
+.footer-link{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--warm);opacity:.35;text-decoration:none;
+  transition:opacity .15s,color .15s;
+}
+.footer-link:hover{opacity:.8;color:var(--gold)}
+.footer-sep{color:var(--gold);opacity:.2;font-size:.7rem}
+
+@keyframes fadeup{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Card entry animation */
+.repo-card{
+  animation:fadeup .5s ease both;
+}
+
+/* Responsive */
+@media(max-width:600px){
+  #grid{grid-template-columns:1fr}
+  .hero-name{font-size:clamp(3rem,16vw,6rem)}
+}
+</style>
+</head>
+<body>
+
+<section id="hero">
+  <p class="hero-eyebrow">github.com / adminmossel</p>
+  <h1 class="hero-name">admin<em>mossel</em></h1>
+  <div class="hero-rule"></div>
+  <p class="hero-bio">Bouwen aan digitale dingen.<br>Retro, tech en alles ertussenin.</p>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    repos
+  </div>
+</section>
+
+<section id="repos">
+  <div class="section-head">
+    <h2 class="section-title">Projecten <em>&amp;</em> Repos</h2>
+    <span class="section-count" id="repoCount"></span>
+  </div>
+  <div id="loading">ophalen...</div>
+  <div id="grid" style="display:none"></div>
+  <div id="error" style="display:none">Kon repos niet laden.</div>
+</section>
+
+<footer>
+  <a class="footer-link" href="https://github.com/adminmossel" target="_blank">GitHub</a>
+  <span class="footer-sep">·</span>
+  <a class="footer-link" href="https://adminmossel.github.io/1-van-de-8/" target="_blank">1 van de 8</a>
+  <span class="footer-sep">·</span>
+  <span class="footer-link">adminmossel</span>
+</footer>
+
+<script>
+var LANG_COLORS = {
+  JavaScript:'#f1e05a', Python:'#3572A5', HTML:'#e34c26',
+  CSS:'#563d7c', TypeScript:'#2b7489', Shell:'#89e051',
+  Vue:'#41b883', PHP:'#4F5D95', Ruby:'#701516', Go:'#00ADD8',
+  Rust:'#dea584', Java:'#b07219', C:'#555555', 'C++':'#f34b7d'
+};
+
+var PAGES_REPOS = ['1-van-de-8'];
+
+fetch('https://api.github.com/users/adminmossel/repos?sort=updated&per_page=50')
+  .then(function(r){ return r.json(); })
+  .then(function(repos){
+    document.getElementById('loading').style.display = 'none';
+    var grid = document.getElementById('grid');
+    grid.style.display = 'grid';
+
+    // filter out special repo
+    repos = repos.filter(function(r){ return r.name !== 'adminmossel.github.io'; });
+    document.getElementById('repoCount').textContent = repos.length + ' repos';
+
+    repos.forEach(function(repo, i){
+      var hasPages = PAGES_REPOS.indexOf(repo.name) !== -1;
+      var langColor = repo.language && LANG_COLORS[repo.language] ? LANG_COLORS[repo.language] : 'var(--gold)';
+      var href = hasPages
+        ? 'https://adminmossel.github.io/' + repo.name + '/'
+        : repo.html_url;
+
+      var card = document.createElement('a');
+      card.className = 'repo-card';
+      card.href = href;
+      card.target = '_blank';
+      card.style.animationDelay = (i * 0.06) + 's';
+
+      var nameParts = repo.name.split('-');
+      var nameHtml = nameParts.length > 1
+        ? nameParts[0] + '<span>-' + nameParts.slice(1).join('-') + '</span>'
+        : repo.name;
+
+      card.innerHTML =
+        '<div class="repo-name">' + nameHtml
+          + (hasPages ? '<span class="pages-badge">live ↗</span>' : '')
+          + '</div>'
+        + '<div class="repo-desc' + (!repo.description ? ' empty' : '') + '">'
+          + (repo.description || 'geen omschrijving')
+          + '</div>'
+        + '<div class="repo-meta">'
+          + (repo.language
+              ? '<span class="repo-lang"><span class="lang-dot" style="background:' + langColor + '"></span>' + repo.language + '</span>'
+              : '')
+          + (repo.stargazers_count > 0
+              ? '<span class="repo-stars">★ ' + repo.stargazers_count + '</span>'
+              : '')
+          + '<span>' + new Date(repo.updated_at).toLocaleDateString('nl-NL', {day:'numeric',month:'short',year:'numeric'}) + '</span>'
+        + '</div>'
+        + '<span class="repo-arrow">↗</span>';
+
+      grid.appendChild(card);
+    });
+
+    if (repos.length === 0) {
+      grid.style.display = 'none';
+      document.getElementById('error').style.display = 'block';
+      document.getElementById('error').textContent = 'Nog geen publieke repos.';
+    }
+  })
+  .catch(function(){
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error').style.display = 'block';
+  });
+</script>
+</body>
+</html>
