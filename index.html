@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>adminmossel</title>
-<meta name="description" content="Portfolio van adminmossel uit Meppel: webprojecten, tools, browserextensies en experimenten.">\n<meta property="og:title" content="adminmossel — projecten & experimenten">\n<meta property="og:description" content="Webprojecten, tools en browserextensies gebouwd door adminmossel in Meppel.">\n<meta name="theme-color" content="#000000">
+<meta name="description" content="Portfolio van adminmossel uit Meppel: webprojecten, tools, browserextensies en experimenten.">
+<meta property="og:title" content="adminmossel — projecten & experimenten">
+<meta property="og:description" content="Webprojecten, tools en browserextensies gebouwd door adminmossel in Meppel.">
+<meta name="theme-color" content="#000000">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -1614,6 +1617,7 @@ function humanizeName(name){
   }).join(' ');
 }
 function generateDescription(repo){
+  if(repo.name === 'IMDb-in-Netflix') return 'Chrome-extensie die IMDb-, Rotten Tomatoes- en Metascore-scores direct op Netflix toont.';
   if(repo.description && repo.description.trim()) return repo.description.trim();
   var label = humanizeName(repo.name);
   if(repo._hasPages) return 'Interactief project — "'+label+'", volledig speelbaar in de browser.';
